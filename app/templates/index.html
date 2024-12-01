@@ -1,0 +1,55 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <style>
+        /* Add the background image */
+        body {
+            background-image: url("{% static 'images/background.png' %}");  <!-- Correct static path -->
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            margin-top: 50px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.5);  <!-- Semi-transparent background -->
+            border-radius: 10px;
+            width: 60%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #ffcc00;  <!-- Golden color for the heading -->
+        }
+    </style>
+</head>
+<body>
+    <audio autoplay loop>
+        <source src="{% static 'audio/background_music.mp3' %}" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+
+    <div class="container">
+        <h1>Welcome to the Recommendation Page!</h1>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Get Recommendations</button>
+        </form>
+        {% if recommendation %}
+            <h2>Your Recommendation:</h2>
+            <p>{{ recommendation }}</p>
+        {% endif %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,11 @@
+.recommendation {
+    font-size: 1.5rem;
+    color: #2ecc71;
+    font-weight: bold;
+    animation: fadeIn 2s ease-in;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}

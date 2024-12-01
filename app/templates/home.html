@@ -1,0 +1,200 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeLink PTSD App</title>
+    <style>
+        body {
+            background-image: url("{% static 'images/background.png' %}");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            font-family: Arial, sans-serif;
+            color: white;
+            text-align: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            margin-top: 50px;
+        }
+
+        .content {
+            margin-top: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            display: inline-block;
+            border-radius: 10px;
+        }
+
+        .chat-container {
+            margin-top: 30px;
+            width: 400px;
+            height: 500px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            display: inline-block;
+            position: relative;
+            color: black;
+        }
+
+        .chat-box {
+            height: 80%;
+            overflow-y: auto;
+            background: #fff;
+            color: black;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .input-box {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .chat-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .chat-button:hover {
+            background-color: #45a049;
+        }
+
+        .connect-button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .connect-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Music -->
+    <audio autoplay loop>
+        <source src="{% static 'audio/calm_piano.mp3' %}" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+
+    <h1>Welcome to LifeLink PTSD App</h1>
+    <div class="content">
+        <p>Your journey towards healing begins here. Chat below to receive personalized guidance.</p>
+    </div>
+
+    <!-- Interactive Chat Box -->
+    <div class="chat-container">
+        <div id="chat-box" class="chat-box">
+            <p><strong>App:</strong> Welcome! How can I assist you today? (e.g., anxiety, trauma, sleep issues)</p>
+        </div>
+        <textarea id="user-input" class="input-box" placeholder="Type your response..." rows="2"></textarea>
+        <button id="send-message" class="chat-button">Send</button>
+    </div>
+
+    <!-- Virtual Professional Section -->
+    <div class="content">
+        <p>Need professional advice? Click below to connect with our Virtual Professional.</p>
+        <button id="connect-professional" class="connect-button">Talk to Virtual Professional</button>
+    </div>
+
+    <script>
+        const chatBox = document.getElementById('chat-box');
+        const userInput = document.getElementById('user-input');
+        const sendMessageButton = document.getElementById('send-message');
+        const connectProfessionalButton = document.getElementById('connect-professional');
+
+        let virtualProfessionalActive = false; // Track if Virtual Professional is active
+        let professionalIndex = 0;
+
+        const appQuestions = [
+            "What are you currently experiencing? (e.g., anxiety, trauma, sleep issues)",
+            "How long have you felt this way? (e.g., days, weeks, months)",
+            "Do you have a support system in place (friends, family, therapist)?",
+            "Would you like me to suggest relaxation or grounding techniques?",
+        ];
+        const professionalResponses = [
+            "Hi! I'm your Virtual Professional. How can I help you today?",
+            "Could you describe your current feelings in more detail?",
+            "Have you tried any grounding techniques?",
+            "Let me know if you'd like to schedule a session with a professional."
+        ];
+
+        const recommendations = {
+            anxiety: "For anxiety, try mindfulness exercises or breathing techniques. Let me know if you'd like guidance.",
+            trauma: "For trauma, grounding techniques and professional support can help. Would you like suggestions?",
+            sleep: "For sleep issues, establishing a calming bedtime routine can work wonders.",
+            default: "Thank you for sharing. Connecting with a professional can provide personalized help."
+        };
+
+        const responses = [];
+        let questionIndex = 0;
+
+        // Handle User Messages
+        sendMessageButton.onclick = function () {
+            const userMessage = userInput.value.trim();
+            if (userMessage) {
+                chatBox.innerHTML += `<p><strong>You:</strong> ${userMessage}</p>`;
+                userInput.value = ""; // Clear input field
+                responses.push(userMessage.toLowerCase());
+
+                // Virtual Professional Handling
+                if (virtualProfessionalActive) {
+                    setTimeout(() => {
+                        chatBox.innerHTML += `<p><strong>Virtual Professional:</strong> ${getVirtualProfessionalResponse()}</p>`;
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }, 1000);
+                } else {
+                    // Regular App Flow
+                    if (questionIndex < appQuestions.length - 1) {
+                        questionIndex++;
+                        setTimeout(() => {
+                            chatBox.innerHTML += `<p><strong>App:</strong> ${appQuestions[questionIndex]}</p>`;
+                            chatBox.scrollTop = chatBox.scrollHeight;
+                        }, 1000);
+                    } else {
+                        setTimeout(() => {
+                            const suggestion = recommendations[responses[0]] || recommendations.default;
+                            chatBox.innerHTML += `<p><strong>App:</strong> ${suggestion}</p>`;
+                            chatBox.scrollTop = chatBox.scrollHeight;
+                        }, 1000);
+                    }
+                }
+            }
+        };
+
+        // Activate Virtual Professional
+        connectProfessionalButton.onclick = function () {
+            virtualProfessionalActive = true;
+            chatBox.innerHTML += `<p><strong>Virtual Professional:</strong> ${professionalResponses[0]}</p>`;
+        };
+
+        // Get Virtual Professional Response
+        function getVirtualProfessionalResponse() {
+            const response = professionalResponses[professionalIndex];
+            professionalIndex = (professionalIndex + 1) % professionalResponses.length;
+            return response;
+        }
+    </script>
+</body>
+</html>
